@@ -1,3 +1,4 @@
+import { User } from './User';
 import mongoose, { Schema, Document } from "mongoose";
 
 
@@ -22,6 +23,7 @@ export interface User extends Document {
     password: string;
     verifyCode: string;
     verifyCodeExpiry: Date;
+    isVerified: boolean;
     isAcceptingMessage: boolean;
     messages: Message[]; 
 
@@ -38,7 +40,31 @@ const UserSchema: Schema<User> = new Schema({
         type: String,
         required: [true, 'Please provide a email'],
         trim: true,
-        unique: true, 
+        unique: true,
         match: [/.+\@.+\..+/, 'Please provide a valid email']
-     },
-});
+    },
+    password: {
+        type: String,
+        required: [true, 'Please provide a password'],
+        
+    },
+    verifyCode: {
+        type: String,
+        required: [true, 'Please provide a verify code'],
+    },
+    verifyCodeExpiry: {
+        type: Date,
+        required: [true, 'Please provide a verify code expiry'],
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    isAcceptingMessage: {
+        type: Boolean,
+        default: true,
+    },
+    messages: [MessageSchema],
+})
+    
+const UserModel = mongoose.models.User as mongoose.Model<User> || mongoose.model<User>('User', UserSchema);
